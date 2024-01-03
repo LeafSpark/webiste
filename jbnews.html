@@ -207,9 +207,6 @@
         
         // Experimental embeds
         function toggleEmbeds() {
-            // Append iframe to li
-            alert("This may not work because of Content Security Policies (CSP) on your network or Reddit, continue?")
-            
             const postList = document.getElementById('postList');
             const flairCheckboxes = document.querySelectorAll('.flairCheckbox:checked');
             const selectedFlairs = Array.from(flairCheckboxes).map(checkbox => checkbox.value);
@@ -225,9 +222,6 @@
                         if (selectedFlairs.includes(item.data.link_flair_text)) {
                             const iframe = document.createElement('iframe');
                             const li = document.createElement('li');
-                            const a = document.createElement('a');
-                            a.href = 'https://www.reddit.com' + item.data.permalink;
-                            a.textContent = item.data.title;
                             // Set iframe attributes
                             iframe.id = 'reddit-embed';
                             iframe.src = `https://www.redditmedia.com${item.data.permalink}?ref_source=embed&ref=share&embed=true`;
@@ -237,7 +231,6 @@
                             iframe.width = '640';
                             iframe.scrolling = 'no';
                             li.appendChild(iframe);
-                            li.appendChild(a);
                             postList.appendChild(li);
                         }
                     });
