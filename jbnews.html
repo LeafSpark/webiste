@@ -7,14 +7,13 @@
         body {
             margin: 0;
             font-family: 'Arial', sans-serif;
-            /* Whatever font */
         }
 
         ul {
             list-style-type: none;
             text-align: middle;
             padding: 10px;
-            border-radius: 17px;
+            border-radius: 16px;
             /* Rounded corners */
             border: 5px solid #fad76e;
             /* List border thickness */
@@ -26,6 +25,7 @@
             margin-bottom: 10px;
             border: 1px solid black;
             padding: 10px;
+            border-radius: 10px;
         }
 
         a {
@@ -33,8 +33,32 @@
             color: black;
         }
 
-        #title0 {
+        #title {
             color: black;
+        }
+
+        #textColor {
+            border-radius: 500px;
+        }
+
+        #gradientColor1 {
+            border-radius: 500px;
+        }
+
+        #gradientColor2 {
+            border-radius: 500px;
+        }
+
+        #borderColor {
+            border-radius: 500px;
+        }
+
+        #flairColor {
+            border-radius: 500px;
+        }
+
+        #backgroundColor {
+            border-radius: 500px;
         }
 
         #settingsPane {
@@ -60,21 +84,34 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
+        .flair-container {
+            display: inline-block;
+            background-color: #9fe0a1;
+            /* Set the background color */
+            padding: 5px 10px;
+            /* Adjust padding as needed */
+            border-radius: 10px;
+            /* Set the border-radius for rounded corners */
+            margin-left: 10px;
+            /* Add margin for spacing */
+        }
     </style>
 </head>
 
 <body>
-    <h1 id="title0">r/jailbreak News</h1>
+    <h1 id="title">r/jailbreak News</h1>
 
     <!-- Checkbox elements for choosing flairs -->
-    <label><input type="checkbox" class="flairCheckbox" value="Release"> Release</label>
-    <label><input type="checkbox" class="flairCheckbox" value="News"> News</label>
-    <label><input type="checkbox" class="flairCheckbox" value="Discussion"> Discussion</label>
-    <label><input type="checkbox" class="flairCheckbox" value="Beta"> Beta</label>
-    <label><input type="checkbox" class="flairCheckbox" value="Upcoming"> Upcoming</label>
-    <label><input type="checkbox" class="flairCheckbox" value="Meta"> Meta</label>
-    <label><input type="checkbox" class="flairCheckbox" value="Question"> Question</label>
-    <label><input type="checkbox" class="flairCheckbox" value="Tutorial"> Tutorial</label>
+    <!-- Add id for browser autofill -->
+    <label><input id="f0" type="checkbox" class="flairCheckbox" value="Release"> Release</label>
+    <label><input id="f1" type="checkbox" class="flairCheckbox" value="News"> News</label>
+    <label><input id="f2" type="checkbox" class="flairCheckbox" value="Discussion"> Discussion</label>
+    <label><input id="f3" type="checkbox" class="flairCheckbox" value="Beta"> Beta</label>
+    <label><input id="f4" type="checkbox" class="flairCheckbox" value="Upcoming"> Upcoming</label>
+    <label><input id="f5" type="checkbox" class="flairCheckbox" value="Meta"> Meta</label>
+    <label><input id="f6" type="checkbox" class="flairCheckbox" value="Question"> Question</label>
+    <label><input id="f7" type="checkbox" class="flairCheckbox" value="Tutorial"> Tutorial</label>
 
     <ul id="postList"></ul>
 
@@ -97,6 +134,9 @@
 
         <label for="borderColor">Border:</label>
         <input type="color" id="borderColor" onchange="changeBorderColor()">
+
+        <label for="flairColor">Flair Color:</label>
+        <input type="color" id="flairColor" onchange="changeFlairColor()">
 
         <button onclick="exportColorSettings()">Export</button>
         <button onclick="importColorSettings()">Import</button>
@@ -122,9 +162,22 @@
                         if (selectedFlairs.includes(item.data.link_flair_text)) {
                             const li = document.createElement('li');
                             const a = document.createElement('a');
+
+                            const flairContainer = document.createElement('div'); // Container for the flair
+                            const flairText = document.createElement('span'); // Span for the flair text
+
+                            // Set the flair text and container attributes
+                            flairText.textContent = item.data.link_flair_text;
+                            flairContainer.className = 'flair-container'; // Add a class for styling
+                            flairContainer.id = 'flairContainer';
+
+                            // Append the flair text to the container
+                            flairContainer.appendChild(flairText);
+
                             a.href = 'https://www.reddit.com' + item.data.permalink;
                             a.textContent = item.data.title;
                             li.appendChild(a);
+                            li.appendChild(flairContainer);
                             postList.appendChild(li);
                         }
                     });
@@ -145,6 +198,17 @@
         function changeTextColor() {
             const textColor = document.getElementById('textColor').value;
             document.querySelectorAll('a').forEach(link => link.style.color = textColor);
+        }
+
+        // Function to change text and flair color
+        function changeFlairColor() {
+            const color = document.getElementById('flairColor').value;
+
+            document.styleSheets[0].insertRule(`.flair-container { background-color: ${color} !important; }`, 0);
+
+            alert("To change the flair color again, please refresh the page.");
+            //     // Change color for flair containers
+            //     document.querySelectorAll('flairContainer').forEach(container => container.style.backgroundColor = color);
         }
 
         // Set CSS gradient colors
@@ -173,6 +237,8 @@
             const gradientColor2 = document.getElementById('gradientColor2').value;
             const borderColor = document.getElementById('borderColor').value;
             const backgroundColor = document.getElementById('backgroundColor').value;
+            const flairColor = document.getElementById('flairColor').value;
+
 
             const colorSettings = {
                 textColor,
@@ -180,6 +246,7 @@
                 gradientColor2,
                 borderColor,
                 backgroundColor,
+                flairColor,
             };
 
             const jsonString = JSON.stringify(colorSettings);
@@ -212,14 +279,15 @@
                         document.getElementById('gradientColor2').value = colorSettings.gradientColor2;
                         document.getElementById('borderColor').value = colorSettings.borderColor;
                         document.getElementById('backgroundColor').value = colorSettings.backgroundColor;
+                        document.getElementById('flairColor').value = colorSettings.flairColor;
 
                         // Update styles after importing
                         changeTextColor();
                         changeGradient();
                         changeBorderColor();
                         changeBackgroundColor();
+                        changeFlairColor();
                     };
-
                     reader.readAsText(file);
                 }
             });
